@@ -1,0 +1,11 @@
+{
+    "name": "expressTS_reactTS_Boilderplate",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/MarkusHeine/express-react-boilerplate-TS.git",
+    "author": "MarkusHeine <markusheine.dev@gmail.com>",
+    "license": "MIT",
+    "scripts": {
+        "start": "cd server && yarn run dev"
+    }
+}
