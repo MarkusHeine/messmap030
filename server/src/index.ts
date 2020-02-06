@@ -4,10 +4,14 @@ import compression from "compression";
 import cookieSession from "cookie-session";
 import cors from "cors";
 import * as dotenv from "dotenv";
+import mongoose from "mongoose";
 
 const app = express();
 
-const PORT = 8080;
+dotenv.config();
+
+const PORT = process.env.PORT;
+const DB_URI_USERS = process.env.DB_URI_USERS;
 
 const corsOptions = {
     origin: "http://localhost:3000",
@@ -18,7 +22,18 @@ const corsOptions = {
 const indexRouter = require("./routes/index");
 const userAPIRouter = require("./routes/userAPI");
 
-dotenv.config();
+mongoose.connect(
+    DB_URI_USERS,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    (error: any) => {
+        if (error) {
+            console.log(error.message);
+        } else {
+            console.log("conntected to db");
+        }
+    }
+);
+
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(compression());
