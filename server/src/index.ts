@@ -1,11 +1,13 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import * as bodyParser from "body-parser";
 import compression from "compression";
 import cookieSession from "cookie-session";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import mongoose from "mongoose";
 import helmet from "helmet";
+import morgan from "morgan";
 
 const app = express();
 
@@ -13,7 +15,7 @@ app.use(helmet());
 dotenv.config();
 
 const PORT = process.env.PORT;
-const DB_URI_USERS = process.env.DB_URI_USERS;
+let DB_URI_USERS = process.env.DB_URI_USERS;
 
 const corsOptions = {
     origin: "http://localhost:3000",
@@ -25,7 +27,7 @@ const indexRouter = require("./routes/index");
 const userAPIRouter = require("./routes/userAPI");
 
 mongoose.connect(
-    DB_URI_USERS,
+    "mongodb://localhost/messmap_users",
     { useNewUrlParser: true, useUnifiedTopology: true },
     (error: any) => {
         if (error) {
@@ -36,8 +38,10 @@ mongoose.connect(
     }
 );
 
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(compression());
 app.use(
     express.urlencoded({

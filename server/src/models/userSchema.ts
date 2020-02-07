@@ -1,4 +1,8 @@
 import mongoose, { Document } from "mongoose";
+import bcrypt from "bcrypt";
+import { promisify } from "util";
+
+const compare = promisify(bcrypt.compare);
 
 export interface IUser extends Document {
     name: string;
@@ -7,9 +11,12 @@ export interface IUser extends Document {
     city: string;
     company: string;
     registerDate: Date;
+    isCorrectPassword: (password: string) => Promise<boolean | undefined>;
 }
 
-export const userSchema = new mongoose.Schema({
+const saltRounds = 10;
+
+export const UserSchema = new mongoose.Schema<IUser>({
     name: {
         type: String,
         required: true
@@ -37,4 +44,33 @@ export const userSchema = new mongoose.Schema({
     }
 });
 
-export const User = mongoose.model<IUser>("User", userSchema);
+UserSchema.pre("save", function(next) {
+    if (this.isNew || this.isModified("password")) {
+        const document = <IUser>this;
+        bcrypt.hash(document.password, saltRounds, function(
+            error,
+            hasedPassword: string
+        ) {
+            if (error) {
+                next(error);
+            } else {
+                document.password = hasedPassword;
+                next();
+            }
+        });
+    } else {
+        console.log("next");
+        next();
+    }
+});
+
+UserSchema.methods.isCorrectPassword = async function(password: string) {
+    try {
+        const match = await compare(password, this.password);
+        return match;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const User = mongoose.model<IUser>("User", UserSchema);
