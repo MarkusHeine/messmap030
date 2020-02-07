@@ -5,9 +5,11 @@ import cookieSession from "cookie-session";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import mongoose from "mongoose";
+import helmet from "helmet";
 
 const app = express();
 
+app.use(helmet());
 dotenv.config();
 
 const PORT = process.env.PORT;
