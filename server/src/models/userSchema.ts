@@ -11,6 +11,7 @@ export interface IUser extends Document {
     city: string;
     company: string;
     registerDate: Date;
+    role: string;
     isCorrectPassword: (password: string) => Promise<boolean | undefined>;
 }
 
@@ -37,6 +38,10 @@ export const UserSchema = new mongoose.Schema<IUser>({
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        required: true
+    },
     registerDate: {
         type: Date,
         required: true,
@@ -49,12 +54,12 @@ UserSchema.pre("save", function(next) {
         const document = <IUser>this;
         bcrypt.hash(document.password, saltRounds, function(
             error,
-            hasedPassword: string
+            hashedPassword: string
         ) {
             if (error) {
                 next(error);
             } else {
-                document.password = hasedPassword;
+                document.password = hashedPassword;
                 next();
             }
         });

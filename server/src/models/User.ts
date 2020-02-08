@@ -4,5 +4,6 @@ export interface User {
     password: string;
     city: string;
     company: string;
+    role: string;
     registerDate: Date;
 }

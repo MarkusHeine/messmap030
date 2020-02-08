@@ -18,14 +18,23 @@ export const allUsers = async (req: Request, res: Response) => {
 };
 
 export const newUser = async (req: Request, res: Response) => {
-    const { name, email, password, city, company, registerDate } = req.body;
+    const {
+        name,
+        email,
+        password,
+        city,
+        company,
+        registerDate,
+        role
+    } = req.body;
     const user = new User({
         name,
         email,
         password,
         city,
         company,
-        registerDate
+        registerDate,
+        role
     });
     try {
         const newUser = await user.save();

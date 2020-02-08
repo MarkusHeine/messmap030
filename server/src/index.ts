@@ -27,7 +27,7 @@ const indexRouter = require("./routes/index");
 const userAPIRouter = require("./routes/userAPI");
 
 mongoose.connect(
-    "mongodb://localhost/messmap_users",
+    DB_URI_USERS,
     { useNewUrlParser: true, useUnifiedTopology: true },
     (error: any) => {
         if (error) {

@@ -1,11 +1,13 @@
-import React, { MouseEvent, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const HomeComponent: React.FC = () => {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
         (async () => {
-            const resp = await fetch("http://localhost:3000/index");
+            const resp = await fetch("http://localhost:3000/index", {
+                credentials: "include"
+            });
             const data = await resp.text();
             setMessage(data);
         })();
