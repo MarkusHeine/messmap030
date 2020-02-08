@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 const LoginComponents: React.FC<RouteComponentProps> = props => {
     const [loginData, setLoginData] = useState({
         email: "admin@admin.de",
-        password: "admin"
+        password: "admin1234"
     });
 
     const handleSubmit = async (e: any) => {

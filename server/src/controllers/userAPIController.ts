@@ -63,7 +63,8 @@ export const authenticateUser = async (req: Request, res: Response) => {
     try {
         const user = await User.findOne({ email });
         if (user === null) {
-            res.status(401).send({ message: "Incorrect email or password" });
+            console.log("no user");
+            res.status(401).json({ message: "Incorrect email or password" });
         } else {
             const resp = user.isCorrectPassword(password);
             const match = <boolean>await resp;
@@ -71,12 +72,14 @@ export const authenticateUser = async (req: Request, res: Response) => {
                 const payload = { user };
                 if (secret !== undefined) {
                     const token = jwt.sign(payload, secret);
+                    console.log("auth ok");
                     res.cookie("token", token, { httpOnly: true })
                         .status(200)
-                        .send("cookies sent");
+                        .json({ message: "cookies sent" });
                 }
             } else {
-                res.status(401).send({
+                console.log("no match");
+                res.status(401).json({
                     message: "Incorrect email or password"
                 });
             }

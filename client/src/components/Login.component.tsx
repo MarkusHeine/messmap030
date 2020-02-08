@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { History, LocationState } from "history";
 import * as yup from "yup";
 import { Button, Form } from "react-bootstrap";
+import { ValidationError } from "../models/ValidationError.model";
+import ValidationErrorMessage from "../utils/validationError";
 
 type LoginComponmentProps = {
     history: History<LocationState>;
@@ -15,7 +17,10 @@ type FormValues = {
 const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
     const [loginData, setLoginData] = useState<FormValues>({
         email: "admin@admin.de",
-        password: "admin"
+        password: "admin123"
+    });
+    const [validationError, setValidationError] = useState<ValidationError>({
+        error: false
     });
 
     const loginDataSchema = yup.object().shape({
@@ -23,7 +28,10 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
             .string()
             .email()
             .required(),
-        password: yup.string().required()
+        password: yup
+            .string()
+            .min(8)
+            .required()
     });
 
     const handleSubmit = async (e: any) => {
@@ -31,7 +39,8 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
         e.preventDefault();
         const loginDataJSON = JSON.stringify(loginData);
         try {
-            await fetch("/userApi/auth", {
+            await loginDataSchema.validate(loginData, { abortEarly: false });
+            const data = await fetch("/userApi/auth", {
                 method: "POST",
                 body: loginDataJSON,
                 credentials: "include",
@@ -39,9 +48,23 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
                     "Content-Type": "application/json"
                 }
             });
-            history.push("/");
+            const resp = await data.json();
+            console.log(data.status);
+            console.log(resp);
+            if (data.status === 200) {
+                history.push("/");
+            } else {
+                throw new Error(resp);
+            }
         } catch (error) {
-            console.log(error);
+            console.log("error:", error);
+            let message: string[];
+            if (error.name !== "ValidationError") {
+                message = [error.response.request.response];
+            } else {
+                message = error.errors;
+            }
+            setValidationError({ error: true, errorMessage: message });
         }
     };
 
@@ -74,6 +97,9 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
                     value={loginData.password}
                 />
             </Form.Group>
+            <ValidationErrorMessage
+                error={validationError}
+            ></ValidationErrorMessage>
             <Button variant="primary" type="submit">
                 Login
             </Button>

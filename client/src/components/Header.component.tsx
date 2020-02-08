@@ -13,7 +13,7 @@ const NavigationHeader: React.FC = () => {
                 <Nav className="mr-auto">
                     <Link to="/login">Login</Link>
                     <Link to="/register">Register</Link>
-                    <Link to="/newEntry">new Entry</Link>
+                    <Link to="/newEntry"> new Entry (secret)</Link>
                 </Nav>
                 <Container>
                     <Route path="/login" component={LoginComponment}></Route>
