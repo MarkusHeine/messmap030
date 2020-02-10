@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Navbar } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import * as yup from "yup";
 import { History, LocationState } from "history";
@@ -172,9 +172,11 @@ const RegisterComponent: React.FC<RegisterProps> = ({ history }) => {
             <ValidationErrorMessage
                 error={validationError}
             ></ValidationErrorMessage>
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
+            <Navbar.Toggle aria-controls="basic-navbar-nav">
+                <Button variant="primary" type="submit" className="float-right">
+                    Submit
+                </Button>
+            </Navbar.Toggle>
         </Form>
     );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { History, LocationState } from "history";
 import * as yup from "yup";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Navbar } from "react-bootstrap";
 import { ValidationError } from "../models/ValidationError.model";
 import ValidationErrorMessage from "../utils/validationError";
 
@@ -99,9 +99,11 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
             <ValidationErrorMessage
                 error={validationError}
             ></ValidationErrorMessage>
-            <Button variant="primary" type="submit">
-                Login
-            </Button>
+            <Navbar.Toggle aria-controls="basic-navbar-nav">
+                <Button variant="primary" type="submit" className="float-right">
+                    Login
+                </Button>
+            </Navbar.Toggle>
         </Form>
     );
 };

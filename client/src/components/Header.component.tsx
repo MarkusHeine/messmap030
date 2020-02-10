@@ -1,27 +1,26 @@
 import React from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
-import { Link, Route } from "react-router-dom";
-import LoginComponment from "./Login.component";
-import RegisterComponent from "./Register.component";
+import { Navbar, Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const NavigationHeader: React.FC = () => {
     return (
-        <Navbar bg="dark" expand="md" variant="dark">
-            <Navbar.Brand>Messmap 030</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar.Brand as={Link} to="/">
+                Messmap 030
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
                 <Nav className="mr-auto">
-                    <Link to="/login">Login</Link>
-                    <Link to="/register">Register</Link>
-                    <Link to="/newEntry"> new Entry (secret)</Link>
+                    <Nav.Link as={Link} to="/login" eventKey="1">
+                        Login
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/register" eventKey="2">
+                        Register
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/newEntry" eventKey="3">
+                        new Entry
+                    </Nav.Link>
                 </Nav>
-                <Container>
-                    <Route path="/login" component={LoginComponment}></Route>
-                    <Route
-                        path="/register"
-                        component={RegisterComponent}
-                    ></Route>
-                </Container>
             </Navbar.Collapse>
         </Navbar>
     );
