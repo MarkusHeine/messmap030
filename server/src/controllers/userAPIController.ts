@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/userSchema";
 import jwt from "jsonwebtoken";
 
-export const userAPI = (req: Request, res: Response) => {
+export const userAPI = (_req: Request, res: Response) => {
     console.log("userApi");
     res.status(200).send("here is the userAPI router");
 };
@@ -31,14 +31,12 @@ export const newUser = async (req: Request, res: Response) => {
     });
     try {
         const newUser = await user.save();
-        console.log(newUser);
         const payload = { newUser };
         if (secret !== undefined) {
             const token = jwt.sign(payload, secret);
-            console.log("auth ok");
             res.cookie("token", token, { httpOnly: true })
                 .status(200)
-                .json({ message: "Auth OK" });
+                .json({ message: "Registration & Auth OK" });
         }
 
         res.status(201).json(newUser);
@@ -66,7 +64,6 @@ export const authenticateUser = async (req: Request, res: Response) => {
     try {
         const user = await User.findOne({ email });
         if (user === null) {
-            console.log("no user");
             res.status(401).json({ message: "Incorrect email or password" });
         } else {
             const resp = user.isCorrectPassword(password);
@@ -75,13 +72,11 @@ export const authenticateUser = async (req: Request, res: Response) => {
                 const payload = { user };
                 if (secret !== undefined) {
                     const token = jwt.sign(payload, secret);
-                    console.log("auth ok");
                     res.cookie("token", token, { httpOnly: true })
                         .status(200)
                         .json({ message: "Auth OK" });
                 }
             } else {
-                console.log("no match");
                 res.status(401).json({
                     message: "Incorrect email or password"
                 });
