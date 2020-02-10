@@ -14,8 +14,8 @@ const app = express();
 app.use(helmet());
 dotenv.config();
 
-const PORT = process.env.PORT;
-let DB_URI_USERS = process.env.DB_URI_USERS;
+const { PORT } = process.env;
+const { DB_URI_USERS } = process.env;
 
 const corsOptions = {
     origin: "http://localhost:3000",
@@ -29,7 +29,7 @@ const userAPIRouter = require("./routes/userAPI");
 mongoose.connect(
     DB_URI_USERS,
     { useNewUrlParser: true, useUnifiedTopology: true },
-    (error: any) => {
+    error => {
         if (error) {
             console.log(error.message);
         } else {

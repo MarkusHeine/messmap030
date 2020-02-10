@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { History, LocationState } from "history";
 import * as yup from "yup";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Container } from "react-bootstrap";
 import { ValidationError } from "../models/ValidationError.model";
 import ValidationErrorMessage from "../utils/validationError";
 
@@ -81,37 +81,39 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
     };
 
     return (
-        <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    name="email"
-                    onChange={handleChange}
-                    value={loginData.email}
-                />
-                <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                </Form.Text>
-            </Form.Group>
-            <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                    onChange={handleChange}
-                    value={loginData.password}
-                />
-            </Form.Group>
-            <ValidationErrorMessage
-                error={validationError}
-            ></ValidationErrorMessage>
-            <Button variant="primary" type="submit" className="float-right">
-                Login
-            </Button>
-        </Form>
+        <Container>
+            <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="formBasicEmail">
+                    <Form.Label>Email address</Form.Label>
+                    <Form.Control
+                        type="email"
+                        placeholder="Enter email"
+                        name="email"
+                        onChange={handleChange}
+                        value={loginData.email}
+                    />
+                    <Form.Text className="text-muted">
+                        We'll never share your email with anyone else.
+                    </Form.Text>
+                </Form.Group>
+                <Form.Group controlId="formBasicPassword">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        onChange={handleChange}
+                        value={loginData.password}
+                    />
+                </Form.Group>
+                <ValidationErrorMessage
+                    error={validationError}
+                ></ValidationErrorMessage>
+                <Button variant="primary" type="submit" className="float-right">
+                    Login
+                </Button>
+            </Form>
+        </Container>
     );
 };
 
