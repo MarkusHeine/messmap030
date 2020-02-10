@@ -18,15 +18,8 @@ export const allUsers = async (req: Request, res: Response) => {
 };
 
 export const newUser = async (req: Request, res: Response) => {
-    const {
-        name,
-        email,
-        password,
-        city,
-        company,
-        registerDate,
-        role
-    } = req.body;
+    const secret = process.env.JWT_SECRET;
+    const { name, email, password, city, company, registerDate } = req.body;
     const user = new User({
         name,
         email,
@@ -34,10 +27,20 @@ export const newUser = async (req: Request, res: Response) => {
         city,
         company,
         registerDate,
-        role
+        role: "User"
     });
     try {
         const newUser = await user.save();
+        console.log(newUser);
+        const payload = { newUser };
+        if (secret !== undefined) {
+            const token = jwt.sign(payload, secret);
+            console.log("auth ok");
+            res.cookie("token", token, { httpOnly: true })
+                .status(200)
+                .json({ message: "Auth OK" });
+        }
+
         res.status(201).json(newUser);
     } catch (error) {
         res.status(500).json({ message: error });

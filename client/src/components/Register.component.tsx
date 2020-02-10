@@ -19,7 +19,7 @@ type FormValues = {
     city?: string;
     company?: string;
 };
-const RegisterComponent: React.FC<RegisterProps> = ({}) => {
+const RegisterComponent: React.FC<RegisterProps> = ({ history }) => {
     const [registerData, setRegisterData] = useState<FormValues>({
         name: "user1",
         email: "user1@user.de",
@@ -64,6 +64,22 @@ const RegisterComponent: React.FC<RegisterProps> = ({}) => {
             await registerDataSchema.validate(registerData, {
                 abortEarly: false
             });
+            const data = await fetch("/userApi/", {
+                method: "POST",
+                body: registerDataJSON,
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const resp = await data.json();
+            console.log(data.status);
+            console.log(resp);
+            if (data.status === 200) {
+                history.push("/");
+            } else {
+                throw new Error(resp);
+            }
         } catch (error) {
             console.log("error:", error);
             let message: string[];
