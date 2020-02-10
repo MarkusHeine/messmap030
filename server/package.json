@@ -4,7 +4,7 @@
     "description": "Boilerplate code for a ExpressTS backend with a ReactTS Frontend",
     "main": "index.js",
     "scripts": {
-        "start:dev": "nodemon dist/index.js",
+        "start:dev": "nodemon dist/server.js",
         "build:dev": "tsc --watch --preserveWatchOutput",
         "dev": "concurrently \"npm:build:dev\" \"npm:start:dev\""
     },
