@@ -75,7 +75,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
                     console.log("auth ok");
                     res.cookie("token", token, { httpOnly: true })
                         .status(200)
-                        .json({ message: "cookies sent" });
+                        .json({ message: "Auth OK" });
                 }
             } else {
                 console.log("no match");

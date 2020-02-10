@@ -3,6 +3,8 @@ import { Button, Form } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import * as yup from "yup";
 import { History, LocationState } from "history";
+import { ValidationError } from "../models/ValidationError.model";
+import ValidationErrorMessage from "../utils/validationError";
 
 type RegisterProps = {
     history: History<LocationState>;
@@ -19,13 +21,17 @@ type FormValues = {
 };
 const RegisterComponent: React.FC<RegisterProps> = ({}) => {
     const [registerData, setRegisterData] = useState<FormValues>({
-        name: "admin",
-        email: "admin@admin.de",
-        repeatEmail: "admin@admin.de",
-        password: "admin123",
-        repeatPassword: "admin123",
+        name: "user1",
+        email: "user1@user.de",
+        repeatEmail: "user1@user.de",
+        password: "user1234",
+        repeatPassword: "user1234",
         city: "Berlin",
-        company: "admin messengers"
+        company: "user messengers"
+    });
+
+    const [validationError, setValidationError] = useState<ValidationError>({
+        error: false
     });
 
     const registerDataSchema = yup.object().shape({
@@ -50,8 +56,24 @@ const RegisterComponent: React.FC<RegisterProps> = ({}) => {
         company: yup.string()
     });
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         console.log("register submit");
+        e.preventDefault();
+        const registerDataJSON = JSON.stringify(registerData);
+        try {
+            await registerDataSchema.validate(registerData, {
+                abortEarly: false
+            });
+        } catch (error) {
+            console.log("error:", error);
+            let message: string[];
+            if (error.name !== "ValidationError") {
+                message = [error.response.request.response];
+            } else {
+                message = error.errors;
+            }
+            setValidationError({ error: true, errorMessage: message });
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,6 +153,9 @@ const RegisterComponent: React.FC<RegisterProps> = ({}) => {
                     value={registerData.company}
                 />
             </Form.Group>
+            <ValidationErrorMessage
+                error={validationError}
+            ></ValidationErrorMessage>
             <Button variant="primary" type="submit">
                 Submit
             </Button>

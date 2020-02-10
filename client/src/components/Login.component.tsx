@@ -34,7 +34,7 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
             .required()
     });
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         console.log("submit");
         e.preventDefault();
         const loginDataJSON = JSON.stringify(loginData);
@@ -57,7 +57,6 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
                 throw new Error(resp);
             }
         } catch (error) {
-            console.log("error:", error);
             let message: string[];
             if (error.name !== "ValidationError") {
                 message = [error.response.request.response];
