@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { History, LocationState } from "history";
 import * as yup from "yup";
-import { Button, Form, Navbar } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { ValidationError } from "../models/ValidationError.model";
 import ValidationErrorMessage from "../utils/validationError";
 
@@ -16,7 +16,7 @@ type FormValues = {
 
 const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
     const [loginData, setLoginData] = useState<FormValues>({
-        email: "admin@admin.de",
+        email: "admin@admin.des",
         password: "admin123"
     });
     const [validationError, setValidationError] = useState<ValidationError>({
@@ -49,21 +49,30 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
                 }
             });
             const resp = await data.json();
-            console.log(data.status);
-            console.log(resp);
+
+            if (data.status === 401) {
+                throw new Error(resp.message);
+            }
             if (data.status === 200) {
+                // Put resp in context
                 history.push("/");
             } else {
                 throw new Error(resp);
             }
         } catch (error) {
             let message: string[];
-            if (error.name !== "ValidationError") {
-                message = [error.response.request.response];
-            } else {
+            if (error && error.name && error.name === "ValidationError") {
                 message = error.errors;
+                setValidationError({ error: true, errorMessage: message });
+            } else if (error && error.message) {
+                message = [error.message];
+                setValidationError({ error: true, errorMessage: message });
+            } else {
+                setValidationError({
+                    error: true,
+                    errorMessage: ["Oops something went wrong"]
+                });
             }
-            setValidationError({ error: true, errorMessage: message });
         }
     };
 
@@ -99,11 +108,9 @@ const LoginComponment: React.FC<LoginComponmentProps> = ({ history }) => {
             <ValidationErrorMessage
                 error={validationError}
             ></ValidationErrorMessage>
-            <Navbar.Toggle aria-controls="basic-navbar-nav">
-                <Button variant="primary" type="submit" className="float-right">
-                    Login
-                </Button>
-            </Navbar.Toggle>
+            <Button variant="primary" type="submit" className="float-right">
+                Login
+            </Button>
         </Form>
     );
 };

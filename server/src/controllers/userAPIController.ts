@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/userSchema";
 import jwt from "jsonwebtoken";
+import createError from "http-errors";
 
 export const userAPI = (_req: Request, res: Response) => {
     console.log("userApi");
@@ -19,7 +20,17 @@ export const allUsers = async (req: Request, res: Response) => {
 
 export const newUser = async (req: Request, res: Response) => {
     const secret = process.env.JWT_SECRET;
-    const { name, email, password, city, company, registerDate } = req.body;
+    const {
+        name,
+        email,
+        repeatEmail,
+        password,
+        repeatPassword,
+        city,
+        company,
+        registerDate
+    } = req.body;
+
     const user = new User({
         name,
         email,
@@ -30,18 +41,27 @@ export const newUser = async (req: Request, res: Response) => {
         role: "User"
     });
     try {
+        if (repeatEmail !== email) {
+            throw createError(400, "Emails does not match");
+        }
+        if (password !== repeatPassword) {
+            throw createError(400, "Passwords does not match");
+        }
         const newUser = await user.save();
         const payload = { newUser };
         if (secret !== undefined) {
             const token = jwt.sign(payload, secret);
             res.cookie("token", token, { httpOnly: true })
                 .status(200)
-                .json({ message: "Registration & Auth OK" });
+                .send(newUser);
         }
-
-        res.status(201).json(newUser);
     } catch (error) {
-        res.status(500).json({ message: error });
+        console.log(error.code);
+        if (error.code === 11000) {
+            res.status(400).json({ message: "Email alreday exists" });
+        } else {
+            res.status(error.statusCode).json({ message: error.message });
+        }
     }
 };
 
@@ -64,7 +84,8 @@ export const authenticateUser = async (req: Request, res: Response) => {
     try {
         const user = await User.findOne({ email });
         if (user === null) {
-            res.status(401).json({ message: "Incorrect email or password" });
+            throw createError(401, "Incorrect email or password");
+            // res.status(401).json({ message:  });
         } else {
             const resp = user.isCorrectPassword(password);
             const match = <boolean>await resp;
@@ -74,15 +95,13 @@ export const authenticateUser = async (req: Request, res: Response) => {
                     const token = jwt.sign(payload, secret);
                     res.cookie("token", token, { httpOnly: true })
                         .status(200)
-                        .json({ message: "Auth OK" });
+                        .send(user);
                 }
             } else {
-                res.status(401).json({
-                    message: "Incorrect email or password"
-                });
+                throw createError(401, "Incorrect email or password");
             }
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(error.statusCode).json({ message: error.message });
     }
 };

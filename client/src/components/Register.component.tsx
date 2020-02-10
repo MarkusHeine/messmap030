@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Navbar } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 import * as yup from "yup";
 import { History, LocationState } from "history";
@@ -39,25 +39,24 @@ const RegisterComponent: React.FC<RegisterProps> = ({ history }) => {
         email: yup
             .string()
             .email()
-            .required(),
+            .required("Email is required"),
         repeatEmail: yup
             .string()
             .email()
-            .required(),
+            .required("Email is required"),
         password: yup
             .string()
             .min(8)
-            .required(),
+            .required("Password is required"),
         repeatPassword: yup
             .string()
             .min(8)
-            .required(),
+            .required("Password is required"),
         city: yup.string(),
         company: yup.string()
     });
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        console.log("register submit");
         e.preventDefault();
         const registerDataJSON = JSON.stringify(registerData);
         try {
@@ -73,22 +72,29 @@ const RegisterComponent: React.FC<RegisterProps> = ({ history }) => {
                 }
             });
             const resp = await data.json();
-            console.log(data.status);
             console.log(resp);
+
+            if (data.status === 400) {
+                throw new Error(resp.message);
+            }
             if (data.status === 200) {
+                // Put resp in context
                 history.push("/");
-            } else {
-                throw new Error(resp);
             }
         } catch (error) {
-            console.log("error:", error);
             let message: string[];
-            if (error.name !== "ValidationError") {
-                message = [error.response.request.response];
-            } else {
+            if (error && error.name && error.name === "ValidationError") {
                 message = error.errors;
+                setValidationError({ error: true, errorMessage: message });
+            } else if (error && error.message) {
+                message = [error.message];
+                setValidationError({ error: true, errorMessage: message });
+            } else {
+                setValidationError({
+                    error: true,
+                    errorMessage: ["Oops something went wrong"]
+                });
             }
-            setValidationError({ error: true, errorMessage: message });
         }
     };
 
@@ -172,11 +178,10 @@ const RegisterComponent: React.FC<RegisterProps> = ({ history }) => {
             <ValidationErrorMessage
                 error={validationError}
             ></ValidationErrorMessage>
-            <Navbar.Toggle aria-controls="basic-navbar-nav">
-                <Button variant="primary" type="submit" className="float-right">
-                    Submit
-                </Button>
-            </Navbar.Toggle>
+
+            <Button variant="primary" type="submit" className="float-right">
+                Submit
+            </Button>
         </Form>
     );
 };
