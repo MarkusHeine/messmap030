@@ -25,7 +25,7 @@
         "@types/morgan": "^1.7.37",
         "@types/node": "^13.7.0",
         "@types/yup": "^0.26.30",
-        "bcrypt": "^3.0.8",
+        "bcrypt": "^5.0.0",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.4",
         "cookie-session": "^1.4.0",
